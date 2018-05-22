@@ -24,7 +24,7 @@
       </el-table-column>
       <el-table-column type="index" width="60">
       </el-table-column>
-      <el-table-column  label="日期" width="120" >
+      <el-table-column  label="日期" width="150" >
         <template slot-scope="scope">
           <span>{{scope.row.message_data | getData}}</span>
         </template>
@@ -47,7 +47,7 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar">
       <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-      <el-pagination background layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="8" :total="total" style="float:right;">
+      <el-pagination background layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="10" :total="this.messagesList.length" style="float:right;">
       </el-pagination>
     </el-col>
     <!--工具条结束-->
@@ -98,7 +98,6 @@
               messagesList:[],
               addFormVisible: false,//新增界面是否显示
               sels:[],//列表选中列
-              total:0,//分页最大
               page: 1,
               showTableList:[],
               addLoading:false,
@@ -138,15 +137,17 @@
           //currentPage 改变时触发
           handleCurrentChange(val) {
             this.page = val;
-            this.showTableList=this.messagesList.slice((this.page-1)*8,this.page*8);
+            this.show();
+          },
+          show(){
+            this.showTableList = this.messagesList.slice(10*(this.page-1),10*this.page);
           },
           getMessage(){
             this.listLoading = true;
             axios.get('/api/user/messages').then((response)=>{
                 this.listLoading = false;
-                this.messagesList= response.data;
-                this.showTableList=this.messagesList.slice(0,8);
-                this.total = this.messagesList.length;
+                this.messagesList= response.data.reverse();
+                this.show()
             }).catch((error)=>{
               console.log(error)
             })
@@ -161,7 +162,6 @@
                 params:{message_name:this.filters.name}
               }).then((response)=>{
                 this.showTableList= response.data;
-                this.total = this.showTableList.length;
                 this.listLoading = false;
               }).catch((error)=>{
                 console.log(error)
@@ -248,7 +248,6 @@
                   };
                   axios.post('/api/user/messages',data).then((response)=>{
                     this.addLoading = false;
-                    this.page=1;
                     this.$message({
                       message: '提交成功',
                       type: 'success'

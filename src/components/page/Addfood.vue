@@ -10,7 +10,7 @@
           <el-input v-model="ruleForm.foods_name" placeholder="请输入菜品名称" style="width: 218px"></el-input>
         </el-form-item>
         <el-form-item label="菜品类别" prop="region">
-          <el-select v-model="ruleForm.value" clearable placeholder="请选择活动区域">
+          <el-select v-model="ruleForm.value" clearable placeholder="菜品类别">
             <el-option v-for="item in ruleForm.region" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
